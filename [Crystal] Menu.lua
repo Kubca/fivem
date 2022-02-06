@@ -530,17 +530,6 @@ Crystal.SubMenus = {
                     TriggerServerEvent('ncore:giveCar', model)
                 end
             end},
-            {text = 'Driving License', func = function()
-                local license = {
-                    "dmv",
-                    "drive",
-                    "drive_bike",
-                    "drive_truck"
-                }
-                for k, v in pairs(license) do
-                    TriggerServerEvent("esx_dmvschool:addLicense", v)
-                end
-            end},
 
             {text = 'Set Custom Job', func = function()
                 local job = Crystal.KeyboardInput('Enter Job Name', '', 30)
