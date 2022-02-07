@@ -6,7 +6,7 @@ Framework.Thread = CreateThread
 Framework.ActiveMenu = 'Main Menu'
 Framework.MenuOpen = true
 Framework.MenuToggle = true
-Framework.Toggles = {}
+Framework.Checkbox = {}
 
 
 Framework.ExampleTable = {
@@ -77,6 +77,7 @@ Framework.SubMenus = {
                 end
             end},
 
+            {text = 'Example Checkbox', type = 'toggle', toggle = 'checkbox-name'},
             {text = 'Close Menu', func = function()
                 Framework.MenuOpen = false
             end},
@@ -113,7 +114,7 @@ end
 
 
 Framework.Thread(function() 
-    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('banner'),'Framework', GetDuiHandle(CreateDui('https://img destination', 400, 100))) Wait(100)
+    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('banner'),'Framework', GetDuiHandle(CreateDui('https://i.imgur.com/ePKeEt7.png', 400, 100))) Wait(100)
 
 
     Framework.Menu = {X = 100, Y = Framework.resY/2, W = 250, H = 20, Max = 12}
@@ -174,7 +175,7 @@ Framework.Thread(function()
             local Y = Framework.Menu.Y + Framework.SubMenus[Framework.ActiveMenu].selectedFeature * Framework.Menu.H
 
             for i = 1, 5 do
-                Framework.Rectangle(Framework.Menu.X+Framework.Menu.W/2-2,Y,Framework.Menu.W-9-i,Framework.Menu.H-6+i,229,111,255,200) 
+                Framework.Rectangle(Framework.Menu.X+Framework.Menu.W/2-2,Y,Framework.Menu.W-9-i,Framework.Menu.H-6+i,221,12,255,200) 
             end
             
             local drawn = 0
@@ -184,7 +185,7 @@ Framework.Thread(function()
                     local y = Framework.Menu.Y + drawn * Framework.Menu.H
                     Framework.DrawText(v.text,Framework.Menu.X+9,y-11,285,4,false) 
                     if v.type == 'toggle' then 
-                        if Framework.Toggles[v.toggle] then 
+                        if Framework.Checkbox[v.toggle] then 
                             Framework.Rectangle(Framework.Menu.X+Framework.Menu.W-15,y,10,10, 1, 1, 1, 255)
                             Framework.Rectangle(Framework.Menu.X+Framework.Menu.W-15,y,8,8, 15, 255, 15, 255)
                         else
@@ -202,15 +203,13 @@ Framework.Thread(function()
                             end)
                         end
                         if v.type == 'toggle' then 
-                            Framework.Toggles[v.toggle] = not Framework.Toggles[v.toggle]
+                            Framework.Checkbox[v.toggle] = not Framework.Checkbox[v.toggle]
                         end
                         if v.type == 'menubutton' then 
                             Framework.ActiveMenu = v.menu
                         end
                     end
 
-                
-                
 
                 end
             end
@@ -226,6 +225,9 @@ Framework.Thread(function()
             end
         end
        
+        if Framework.Checkbox['checkbox-name'] then
+            print("checkbox enabled!")
+        end
 
     end
 end)
