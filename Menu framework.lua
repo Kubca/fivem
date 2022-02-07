@@ -18,21 +18,6 @@ Framework.ExampleTable2 = {
    'example 2',
 }
 
-
-Framework.enumerate = function(aH, aI, aJ)
-    return coroutine.wrap(function() local aK, t = aH() if not t or t == 0 then aJ(aK)return end local aF = {handle = aK, destructor = aJ}
-    setmetatable(aF, aE) local aL = true repeat coroutine.yield(t) aL, t = aI(aK) until not aL aF.destructor, aF.handle = nil, nil aJ(aK) end)
-end
-Framework.enumerateVehicles = function()
-    return Framework.enumerate(FindFirstVehicle,FindNextVehicle,EndFindVehicle)
-end
-Framework.enumeratePeds = function()
-    return Framework.enumerate(FindFirstPed,FindNextPed,EndFindPed)
-end
-Framework.enumerateObjects = function()
-    return Framework.enumerate(FindFirstObject,FindNextObject,EndFindObject)
-end
-
 Framework.Rectangle = function(x,y,w,h,r,g,b,a) 
     DrawRect(x/Framework.resX, y/Framework.resY, w/Framework.resX, h/Framework.resY, r, g, b, a)
 end
@@ -87,7 +72,7 @@ Framework.SubMenus = {
 
             {text = 'Button with Input', func = function()
                 local input = Framework.KeyboardInput('Enter text', '', 100)
-                if input > 0 then
+                if input ~= "" then
                     print("you pressed me and putted "..input)
                 end
             end},
