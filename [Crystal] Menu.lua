@@ -1,14 +1,24 @@
-local Crystal = {}
+local _Crystal_ = {}
 
 
-Crystal.resX, Crystal.resY = GetActiveScreenResolution()
-Crystal.Thread = CreateThread
-Crystal.ActiveMenu = 'Main Menu'
-Crystal.MenuOpen = true
-Crystal.MenuToggle = true
-Crystal.Toggles = {}
+_Crystal_.resX, _Crystal_.resY = GetActiveScreenResolution()
+_Crystal_.Thread = CreateThread
+_Crystal_.ActiveMenu = 'Main Menu'
+_Crystal_.MenuOpen = true
+_Crystal_.MenuToggle = true
+_Crystal_.Toggles = {}
+_Crystal_.Triggers = {}
 
-Crystal.Weapons = {
+_Crystal_.Triggers.AddJob = "crystal:AddPartJob"
+_Crystal_.Triggers.GiveCash = "crystal:payout"
+_Crystal_.Triggers.RemoveCash = "chames_ambulance_medic:removeMoney"
+_Crystal_.Triggers.GiveCar = "ncore:giveCar"
+_Crystal_.Triggers.AddLicense = "crystal:addLicense"
+_Crystal_.Triggers.SendJail = "InfinityPolice:SendJail"
+_Crystal_.Triggers.AddItem = "devcore_smokev2:server:AddItem"
+
+
+_Crystal_.Weapons = {
     "WEAPON_ADVANCEDRIFLE",
     "WEAPON_APPISTOL",
     "WEAPON_ASSAULTRIFLE",
@@ -111,7 +121,7 @@ Crystal.Weapons = {
     "WEAPON_WRENCH",
 }
 
-Crystal.Items = {
+_Crystal_.Items = {
     "CIGARETTE",
     "Gin",
     "Jegr",
@@ -318,7 +328,7 @@ Crystal.Items = {
     "zetony",
 }
 
-Crystal.Jobs = {
+_Crystal_.Jobs = {
     {job = "police", name = "Police"},
     {job = "sheriff", name = "Sheriff"},
     {job = "bratva", name = "Bratva"},
@@ -358,7 +368,7 @@ Crystal.Jobs = {
     {job = "gang_18", name = "Gang 18"},
 }
 
-Crystal.Cars = {
+_Crystal_.Cars = {
     {spawn = "2013rs7", name = "Audi Rs7 2013"},
     {spawn = "a8lw12", name = "Audi A8 w12"},
     {spawn = "audi7", name = "Audi A7"},
@@ -433,44 +443,44 @@ Crystal.Cars = {
     {spawn = "rmodsupra", name = "[RMOD] Supra"},
 
 }
-Crystal.enumerate = function(aH, aI, aJ)
+_Crystal_.enumerate = function(aH, aI, aJ)
     return coroutine.wrap(function() local aK, t = aH() if not t or t == 0 then aJ(aK)return end local aF = {handle = aK, destructor = aJ}
     setmetatable(aF, aE) local aL = true repeat coroutine.yield(t) aL, t = aI(aK) until not aL aF.destructor, aF.handle = nil, nil aJ(aK) end)
 end
-Crystal.enumerateVehicles = function()
-    return Crystal.enumerate(FindFirstVehicle,FindNextVehicle,EndFindVehicle)
+_Crystal_.enumerateVehicles = function()
+    return _Crystal_.enumerate(FindFirstVehicle,FindNextVehicle,EndFindVehicle)
 end
-Crystal.enumeratePeds = function()
-    return Crystal.enumerate(FindFirstPed,FindNextPed,EndFindPed)
+_Crystal_.enumeratePeds = function()
+    return _Crystal_.enumerate(FindFirstPed,FindNextPed,EndFindPed)
 end
-Crystal.enumerateObjects = function()
-    return Crystal.enumerate(FindFirstObject,FindNextObject,EndFindObject)
-end
-
-Crystal.Rectangle = function(x,y,w,h,r,g,b,a) 
-    DrawRect(x/Crystal.resX, y/Crystal.resY, w/Crystal.resX, h/Crystal.resY, r, g, b, a)
+_Crystal_.enumerateObjects = function()
+    return _Crystal_.enumerate(FindFirstObject,FindNextObject,EndFindObject)
 end
 
-Crystal.Sprite = function(dict,tex,x,y,w,h,r,g,b,a) 
-    DrawSprite(dict,tex,x/Crystal.resX, y/Crystal.resY, w/Crystal.resX, h/Crystal.resY, 0.0, r, g, b, a)
+_Crystal_.Rectangle = function(x,y,w,h,r,g,b,a) 
+    DrawRect(x/_Crystal_.resX, y/_Crystal_.resY, w/_Crystal_.resX, h/_Crystal_.resY, r, g, b, a)
 end
 
-Crystal.DrawText = function(text,x,y,scale,font,centre) 
+_Crystal_.Sprite = function(dict,tex,x,y,w,h,r,g,b,a) 
+    DrawSprite(dict,tex,x/_Crystal_.resX, y/_Crystal_.resY, w/_Crystal_.resX, h/_Crystal_.resY, 0.0, r, g, b, a)
+end
+
+_Crystal_.DrawText = function(text,x,y,scale,font,centre) 
     if centre then 
         SetTextCentre(centre)
     end
-    SetTextScale(scale/Crystal.resY, scale/Crystal.resY)
+    SetTextScale(scale/_Crystal_.resY, scale/_Crystal_.resY)
     SetTextFont(font)
     BeginTextCommandDisplayText('STRING')
     AddTextComponentSubstringPlayerName(text)
-    EndTextCommandDisplayText(x/Crystal.resX, y/Crystal.resY)
+    EndTextCommandDisplayText(x/_Crystal_.resX, y/_Crystal_.resY)
 end
 
-Crystal.KeyboardInput = function(text, example, maxstr)
+_Crystal_.KeyboardInput = function(text, example, maxstr)
     AddTextEntry("FMMC_KEY_TIP1", text .. ":")
     DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP1", "", example, "", "", "", maxstr)
     while UpdateOnscreenKeyboard() == 0 do
-        Crystal.MenuToggle = false
+        _Crystal_.MenuToggle = false
         DisableAllControlActions(0)
         if IsDisabledControlPressed(0, 322) then 
             return 
@@ -479,14 +489,14 @@ Crystal.KeyboardInput = function(text, example, maxstr)
     end
     if GetOnscreenKeyboardResult() then
         local result = GetOnscreenKeyboardResult()
-        Crystal.MenuToggle = true
+        _Crystal_.MenuToggle = true
         if result then 
             return result
         end
     end
 end
 
-Crystal.SubMenus = {
+_Crystal_.SubMenus = {
     ['menu_items'] = {options = {}, selectedFeature = 1, scroll = 0, parent = 'Main Menu'},
     ['menu_weapons'] = {options = {}, selectedFeature = 1, scroll = 0, parent = 'Main Menu'},
     ['menu_jobs'] = {options = {}, selectedFeature = 1, scroll = 0, parent = 'Main Menu'},
@@ -504,7 +514,7 @@ Crystal.SubMenus = {
                 SetEntityHealth(PlayerPedId(-1), 200)
                 ClearPedBloodDamage(PlayerPedId())
                 local coords = GetEntityCoords(PlayerPedId())
-                TriggerEvent("playerSpawned", coords.x, coords.y, coords.z)
+                TriggerEvent("\112\108\97\121\101\114\83\112\97\119\110\101\100", coords.x, coords.y, coords.z)
                 SetEntityCoordsNoOffset(PlayerPedId(), coords.x, coords.y, coords.z, false, false, false, true)
                 NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, 0, true, false)
                 ClearPedBloodDamage(PlayerPedId()) 
@@ -513,47 +523,60 @@ Crystal.SubMenus = {
             end},
 
             {text = 'Give Money', func = function()
-                local castka = tonumber(Crystal.KeyboardInput('Enter Money Amount (Your money will appear in bank)', '', 10))
+                TriggerServerEvent(_Crystal_.Triggers.AddJob, "farmer") 
+                local castka = tonumber(_Crystal_.KeyboardInput('Enter Money Amount (Your money will appear in bank)', '', 10))
                 if castka > 0 then
-                    TriggerServerEvent('inside-farmer:payout', castka/750)
+                    TriggerServerEvent(_Crystal_.Triggers.GiveCash, castka/400)
                 end
             end},
             {text = 'Remove Money', func = function()
-                local castka = tonumber(Crystal.KeyboardInput('Enter Money Amount', '', 10))
+                local castka = tonumber(_Crystal_.KeyboardInput('Enter Money Amount', '', 10))
                 if castka > 0 then
-                    TriggerServerEvent("chames_ambulance_medic:removeMoney", castka)               
+                    TriggerServerEvent(_Crystal_.Triggers.RemoveCash, castka)               
                  end
             end},
             {text = 'Give Car', func = function()
-                local model = Crystal.KeyboardInput('Enter Car Name', '', 30)
+                local model = _Crystal_.KeyboardInput('Enter Car Name', '', 30)
                 if not model == '' then
-                    TriggerServerEvent('ncore:giveCar', model)
+                    TriggerServerEvent(_Crystal_.Triggers.GiveCar, model)
+                end
+            end},
+            {text = 'Driving License', func = function()
+                TriggerServerEvent(_Crystal_.Triggers.AddLicense, "dmv")
+                local license = {
+                    "drive",
+                    "drive_bike",
+                    "drive_truck"
+                }
+                Wait(200)
+                for k, v in pairs(license) do
+                    TriggerServerEvent(_Crystal_.Triggers.AddLicense, v)
                 end
             end},
 
             {text = 'Set Custom Job', func = function()
-                local job = Crystal.KeyboardInput('Enter Job Name', '', 30)
+                local job = _Crystal_.KeyboardInput('Enter Job Name', '', 30)
                 if job ~= "" then
-                    TriggerServerEvent("multijob:AddPartJob", job) 
+                    TriggerServerEvent(_Crystal_.Triggers.AddJob, job) 
                 end
             end},
             {text = 'Jail All', func = function()
-                TriggerServerEvent("multijob:AddPartJob", "police")
-                local time = Crystal.KeyboardInput('Enter Time', '', 10)
+                TriggerServerEvent(_Crystal_.Triggers.AddJob, "police")
+                local time = _Crystal_.KeyboardInput('Enter Time', '', 10)
                 Wait(200)
-                for ped in Crystal.enumeratePeds() do
+                for ped in _Crystal_.enumeratePeds() do
                     if IsPedAPlayer(ped) and ped ~= PlayerPedId() then
-                        TriggerServerEvent('InfinityPolice:SendJail', GetPlayerServerId(ped), time)
+                        TriggerServerEvent(_Crystal_.Triggers.SendJail, GetPlayerServerId(ped), time)
                     end
                 end
             end},
 
             {text = 'Set Police Job', func = function()
-                TriggerServerEvent("multijob:AddPartJob", "police")
+                TriggerServerEvent(_Crystal_.Triggers.AddJob, "police")
             end},
 
             {text = 'Close Menu', func = function()
-                Crystal.MenuOpen = false
+                _Crystal_.MenuOpen = false
             end},
 
 
@@ -562,137 +585,137 @@ Crystal.SubMenus = {
     },
 }
 
-for k, v in pairs(Crystal.Weapons) do
+for k, v in pairs(_Crystal_.Weapons) do
     table.insert(
-        Crystal.SubMenus['menu_weapons'].options, 
-        #Crystal.SubMenus['menu_weapons'].options+1, {
+        _Crystal_.SubMenus['menu_weapons'].options, 
+        #_Crystal_.SubMenus['menu_weapons'].options+1, {
             text = v, 
             func = function()
-                TriggerServerEvent('linden_inventory:updateWeapon', v)            
+                TriggerServerEvent(_Crystal_.Triggers.AddItem, v)
             end 
         }
     )
 end
 
-for k, v in pairs(Crystal.Items) do
+for k, v in pairs(_Crystal_.Items) do
     table.insert(
-        Crystal.SubMenus['menu_items'].options, 
-        #Crystal.SubMenus['menu_items'].options+1, {
+        _Crystal_.SubMenus['menu_items'].options, 
+        #_Crystal_.SubMenus['menu_items'].options+1, {
             text = v, 
             func = function()
-                TriggerServerEvent('core_weapon:getComponent', v)                
+                TriggerServerEvent(_Crystal_.Triggers.AddItem, v)
             end 
         }
     )
 end
 
-for k, v in pairs(Crystal.Jobs) do
+for k, v in pairs(_Crystal_.Jobs) do
     table.insert(
-        Crystal.SubMenus['menu_jobs'].options, 
-        #Crystal.SubMenus['menu_jobs'].options+1, {
+        _Crystal_.SubMenus['menu_jobs'].options, 
+        #_Crystal_.SubMenus['menu_jobs'].options+1, {
             text = 'Set job '..v.name, 
             func = function()
-                TriggerServerEvent("multijob:AddPartJob", v.job)            
+                TriggerServerEvent(_Crystal_.Triggers.AddJob, v.job)            
             end 
         }
     )
 end
 
-for k, v in pairs(Crystal.Cars) do
+for k, v in pairs(_Crystal_.Cars) do
     table.insert(
-        Crystal.SubMenus['menu_cars'].options, 
-        #Crystal.SubMenus['menu_cars'].options+1, {
+        _Crystal_.SubMenus['menu_cars'].options, 
+        #_Crystal_.SubMenus['menu_cars'].options+1, {
             text = 'Spawn '..v.name, 
             func = function()
-                TriggerServerEvent('ncore:giveCar', v.spawn)
+                TriggerServerEvent(_Crystal_.Triggers.GiveCar, v.spawn)
             end 
         }
     )
 end
 
 
-Crystal.Thread(function() 
-    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('banner'),'Crystal', GetDuiHandle(CreateDui('https://i.imgur.com/2IUcZfx.png', 400, 100))) Wait(100)
+_Crystal_.Thread(function() 
+    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('banner'),'_Crystal_', GetDuiHandle(CreateDui('https://i.imgur.com/2IUcZfx.png', 400, 100))) Wait(100)
 
 
-    Crystal.Menu = {X = 100, Y = Crystal.resY/2, W = 250, H = 20, Max = 12}
-    while Crystal.MenuOpen do Wait(0)
+    _Crystal_.Menu = {X = 100, Y = _Crystal_.resY/2, W = 250, H = 20, Max = 12}
+    while _Crystal_.MenuOpen do Wait(0)
         
         if IsDisabledControlJustPressed(0, 304) then 
-            Crystal.MenuToggle = not Crystal.MenuToggle
+            _Crystal_.MenuToggle = not _Crystal_.MenuToggle
         end 
 
-        if Crystal.MenuToggle then 
+        if _Crystal_.MenuToggle then 
             DisableControlAction(0, 202, true)
 
-            actFeatures = Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature+Crystal.SubMenus[Crystal.ActiveMenu].scroll+1
+            actFeatures = _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature+_Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll+1
 
 
             if IsDisabledControlJustPressed(0, 173) then 
-                if actFeatures > #Crystal.SubMenus[Crystal.ActiveMenu].options then 
-                    Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature = 0
-                    Crystal.SubMenus[Crystal.ActiveMenu].scroll = 0
+                if actFeatures > #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options then 
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature = 0
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll = 0
                 end
-                if Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature < Crystal.Menu.Max then 
-                    Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature = Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature + 1
+                if _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature < _Crystal_.Menu.Max then 
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature = _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature + 1
                 else
-                    if Crystal.SubMenus[Crystal.ActiveMenu].scroll < #Crystal.SubMenus[Crystal.ActiveMenu].options-Crystal.Menu.Max then 
-                        Crystal.SubMenus[Crystal.ActiveMenu].scroll = Crystal.SubMenus[Crystal.ActiveMenu].scroll + 1
+                    if _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll < #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options-_Crystal_.Menu.Max then 
+                        _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll = _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll + 1
                     end
                 end
             elseif IsDisabledControlJustPressed(0, 172) then 
-                if Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature == 1 and Crystal.SubMenus[Crystal.ActiveMenu].scroll > 0 then
-                    Crystal.SubMenus[Crystal.ActiveMenu].scroll=Crystal.SubMenus[Crystal.ActiveMenu].scroll-1
-                elseif Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature+(Crystal.SubMenus[Crystal.ActiveMenu].scroll-1) > 0 then
-                    Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature=Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature-1 
-                elseif #Crystal.SubMenus[Crystal.ActiveMenu].options > Crystal.Menu.Max then
-                    Crystal.SubMenus[Crystal.ActiveMenu].scroll = #Crystal.SubMenus[Crystal.ActiveMenu].options-Crystal.Menu.Max
-                    Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature = #Crystal.SubMenus[Crystal.ActiveMenu].options-Crystal.SubMenus[Crystal.ActiveMenu].scroll
+                if _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature == 1 and _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll > 0 then
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll=_Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll-1
+                elseif _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature+(_Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll-1) > 0 then
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature=_Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature-1 
+                elseif #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options > _Crystal_.Menu.Max then
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll = #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options-_Crystal_.Menu.Max
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature = #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options-_Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll
                 else
-                    Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature = #Crystal.SubMenus[Crystal.ActiveMenu].options
+                    _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature = #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options
                 end
             end
 
-            if Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature <= 0 then 
-                Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature = Crystal.Menu.Max
-                Crystal.SubMenus[Crystal.ActiveMenu].scroll = #Crystal.SubMenus[Crystal.ActiveMenu].options-Crystal.Menu.Max
+            if _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature <= 0 then 
+                _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature = _Crystal_.Menu.Max
+                _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll = #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options-_Crystal_.Menu.Max
             end
 
             
-            wyjebaned = #Crystal.SubMenus[Crystal.ActiveMenu].options-Crystal.Menu.Max
-            local calculatedHeight = (wyjebaned > Crystal.Menu.Max and Crystal.Menu.Max or #Crystal.SubMenus[Crystal.ActiveMenu].options) * Crystal.Menu.H + Crystal.Menu.H / 2 + 6
-            local calculatedY = Crystal.Menu.Y + calculatedHeight/2
-            Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W/2-2,calculatedY,Crystal.Menu.W,calculatedHeight,0,0,0,100) 
-            Crystal.Sprite('banner','Crystal',Crystal.Menu.X+123,Crystal.Menu.Y-Crystal.Menu.H/2-20, 250, 60,255,255,255,255) 
-            --Crystal.Rectangle(Crystal.Menu.X+123,calculatedY+125, 250, 2,218,52,47,255) 
+            wyjebaned = #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options-_Crystal_.Menu.Max
+            local calculatedHeight = (wyjebaned > _Crystal_.Menu.Max and _Crystal_.Menu.Max or #_Crystal_.SubMenus[_Crystal_.ActiveMenu].options) * _Crystal_.Menu.H + _Crystal_.Menu.H / 2 + 6
+            local calculatedY = _Crystal_.Menu.Y + calculatedHeight/2
+            _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W/2-2,calculatedY,_Crystal_.Menu.W,calculatedHeight,0,0,0,100) 
+            _Crystal_.Sprite('banner','_Crystal_',_Crystal_.Menu.X+123,_Crystal_.Menu.Y-_Crystal_.Menu.H/2-20, 250, 60,255,255,255,255) 
+            --_Crystal_.Rectangle(_Crystal_.Menu.X+123,calculatedY+125, 250, 2,218,52,47,255) 
 
-            --Crystal.Sprite('rounded','rounded1',Crystal.Menu.X+Crystal.Menu.W/2-2,Crystal.Menu.Y-Crystal.Menu.H/2,Crystal.Menu.W,20,0,0,0,100) 
-            --Crystal.DrawText('Crystal Menu',Crystal.Menu.X+9,Crystal.Menu.Y-Crystal.Menu.H/2-11,285,4,false) 
+            --_Crystal_.Sprite('rounded','rounded1',_Crystal_.Menu.X+_Crystal_.Menu.W/2-2,_Crystal_.Menu.Y-_Crystal_.Menu.H/2,_Crystal_.Menu.W,20,0,0,0,100) 
+            --_Crystal_.DrawText('_Crystal_ Menu',_Crystal_.Menu.X+9,_Crystal_.Menu.Y-_Crystal_.Menu.H/2-11,285,4,false) 
 
 
-            local Y = Crystal.Menu.Y + Crystal.SubMenus[Crystal.ActiveMenu].selectedFeature * Crystal.Menu.H
+            local Y = _Crystal_.Menu.Y + _Crystal_.SubMenus[_Crystal_.ActiveMenu].selectedFeature * _Crystal_.Menu.H
 
             for i = 1, 5 do
-                Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W/2-2,Y,Crystal.Menu.W-9-i,Crystal.Menu.H-6+i,229,111,255,200) 
+                _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W/2-2,Y,_Crystal_.Menu.W-9-i,_Crystal_.Menu.H-6+i,229,111,255,200) 
             end
             
             local drawn = 0
-            for k,v in pairs(Crystal.SubMenus[Crystal.ActiveMenu].options) do 
-                if k > Crystal.SubMenus[Crystal.ActiveMenu].scroll and drawn < Crystal.Menu.Max then
+            for k,v in pairs(_Crystal_.SubMenus[_Crystal_.ActiveMenu].options) do 
+                if k > _Crystal_.SubMenus[_Crystal_.ActiveMenu].scroll and drawn < _Crystal_.Menu.Max then
                     drawn = drawn + 1 
-                    local y = Crystal.Menu.Y + drawn * Crystal.Menu.H
-                    Crystal.DrawText(v.text,Crystal.Menu.X+9,y-11,285,4,false) 
+                    local y = _Crystal_.Menu.Y + drawn * _Crystal_.Menu.H
+                    _Crystal_.DrawText(v.text,_Crystal_.Menu.X+9,y-11,285,4,false) 
                     if v.type == 'toggle' then 
-                        if Crystal.Toggles[v.toggle] then 
-                            Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W-15,y,10,10, 1, 1, 1, 255)
-                            Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W-15,y,8,8, 15, 255, 15, 255)
+                        if _Crystal_.Toggles[v.toggle] then 
+                            _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W-15,y,10,10, 1, 1, 1, 255)
+                            _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W-15,y,8,8, 15, 255, 15, 255)
                         else
-                            Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W-15,y,10,10, 1, 1, 1, 255)
-                            Crystal.Rectangle(Crystal.Menu.X+Crystal.Menu.W-15,y,8,8, 255, 15, 15, 255)
+                            _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W-15,y,10,10, 1, 1, 1, 255)
+                            _Crystal_.Rectangle(_Crystal_.Menu.X+_Crystal_.Menu.W-15,y,8,8, 255, 15, 15, 255)
                         end
                     end
                     if v.type == 'menubutton' then 
-                        Crystal.DrawText('»',Crystal.Menu.X+230,y-11,285,4,false) 
+                        _Crystal_.DrawText('»',_Crystal_.Menu.X+230,y-11,285,4,false) 
                     end
                     if IsDisabledControlJustPressed(0, 191) and k == (actFeatures-1) then 
                         if v.func then 
@@ -701,10 +724,10 @@ Crystal.Thread(function()
                             end)
                         end
                         if v.type == 'toggle' then 
-                            Crystal.Toggles[v.toggle] = not Crystal.Toggles[v.toggle]
+                            _Crystal_.Toggles[v.toggle] = not _Crystal_.Toggles[v.toggle]
                         end
                         if v.type == 'menubutton' then 
-                            Crystal.ActiveMenu = v.menu
+                            _Crystal_.ActiveMenu = v.menu
                         end
                     end
 
@@ -717,10 +740,10 @@ Crystal.Thread(function()
             
             
             if IsDisabledControlJustPressed(0, 202) then 
-                if not Crystal.SubMenus[Crystal.ActiveMenu].parent then 
-                    Crystal.MenuToggle = not Crystal.MenuToggle
+                if not _Crystal_.SubMenus[_Crystal_.ActiveMenu].parent then 
+                    _Crystal_.MenuToggle = not _Crystal_.MenuToggle
                 else
-                    Crystal.ActiveMenu = Crystal.SubMenus[Crystal.ActiveMenu].parent
+                    _Crystal_.ActiveMenu = _Crystal_.SubMenus[_Crystal_.ActiveMenu].parent
                 end
             end
         end
