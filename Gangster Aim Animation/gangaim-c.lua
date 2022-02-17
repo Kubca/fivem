@@ -33,8 +33,9 @@ Gang.V.Callback(function()
 end)
 
 Gang.F.HoldingWeapon = function(wep)
+    Gang.V.Reloading = IsPedReloading(Gang.V.SelfPed)
     for i = 1, #Gang_Config.Weapons do
-        if wep == Gang.V.Hash(Gang_Config.Weapons[i]) then
+        if wep == Gang.V.Hash(Gang_Config.Weapons[i]) and not Gang.V.Reloading then
             return true 
         end
     end
