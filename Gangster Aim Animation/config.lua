@@ -7,7 +7,7 @@ Gang_Config.ESX_getSharedObject = "esx:getSharedObject" -- Change this if your s
 Gang_Config.Jobcheck = false -- Toggle job check so only people with job written bellow can use this animation  
 Gang_Config.Jobs = {"vagos", "bloods"} -- If you want to allow more jobs write them here
 
-Gang_Config.Weaponcheck = true -- Checking only for weapons that gangsters fr use and shoot with them like this!!!
+Gang_Config.Weaponcheck = false -- Checking only for weapons that gangsters fr use and shoot with them like this!!!
 Gang_Config.Weapons = {
     "weapon_pistol",
     "weapon_pistol_mk2",
