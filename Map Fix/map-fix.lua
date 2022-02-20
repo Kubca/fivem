@@ -7,9 +7,10 @@ MapFix.F.Callback = CreateThread
 MapFix.F.Enable = true 
 MapFix.F.Wait = Wait
 
+MapFix.N.Radar = DisplayRadar
+MapFix.N.BigMap_Toggle = SetBigmapActive
+
 MapFix.F.Radar_Fix = function()
-    MapFix.N.Radar = DisplayRadar
-    MapFix.N.BigMap_Toggle = SetBigmapActive
     MapFix.N.Veh_Check = IsPedInAnyVehicle(PlayerPedId(), 0) 
     MapFix.N.BigMap_Check = IsBigmapActive() 
     MapFix.N.FullMap_Check = IsBigmapFull()
