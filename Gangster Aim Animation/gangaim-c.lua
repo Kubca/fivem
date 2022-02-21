@@ -16,6 +16,7 @@ Gang.V.SelfPed = PlayerPedId()
 Gang.V.SelfId = PlayerId()
 Gang.V.ESX_Source = source
 
+
 ClearPedSecondaryTask(Gang.V.SelfPed)
 
 Gang.V.Callback(function()
@@ -99,7 +100,7 @@ end
 
 Gang.V.Callback(function()
     while Gang.V.ToggleScript do 
-        Gang.V.Wait(0)
+        Gang.V.Wait(Gang_Config.Delay)
         Gang.F.AimCommand()
         Gang.F.GansterAimHandler()
     end
