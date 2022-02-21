@@ -14,10 +14,6 @@ Gang.V.ToggleScript = true
 Gang.V.IsAimToggled = false
 Gang.V.SelfPed = PlayerPedId()
 Gang.V.SelfId = PlayerId()
-Gang.V.IsAiming = IsDisabledControlPressed
-Gang.V.AimCheck = IsPlayerFreeAiming
-Gang.V.Armed = IsPedArmed
-Gang.V.Hash = GetHashKey
 Gang.V.ESX_Source = source
 
 ClearPedSecondaryTask(Gang.V.SelfPed)
@@ -35,7 +31,7 @@ end)
 Gang.F.HoldingWeapon = function(wep)
     Gang.V.Reloading = IsPedReloading(Gang.V.SelfPed)
     for i = 1, #Gang_Config.Weapons do
-        if wep == Gang.V.Hash(Gang_Config.Weapons[i]) and not Gang.V.Reloading then
+        if wep == GetHashKey(Gang_Config.Weapons[i]) and not Gang.V.Reloading then
             return true 
         end
     end
@@ -59,7 +55,7 @@ Gang.F.Animation = function()
     if Gang_Config.Weaponcheck then
         Gang.V.IsAllowed = Gang.F.HoldingWeapon(Gang.V.Weapon)
         if Gang.V.IsAllowed then 
-            if not Gang.V.AimCheck(Gang.V.SelfId) then
+            if not IsPlayerFreeAiming(Gang.V.SelfId) then
                 SetEnableHandcuffs(Gang.V.SelfPed, false)
                 TaskPlayAnim(Gang.V.SelfPed, Gang.V.AnimLib, Gang.V.Anim, 8.0, 2.5, -1, 50, 0, 0, 0, 0)
             else
@@ -69,7 +65,7 @@ Gang.F.Animation = function()
             ClearPedSecondaryTask(Gang.V.SelfPed)
         end
     else
-        if not Gang.V.AimCheck(Gang.V.SelfId) then
+        if not IsPlayerFreeAiming(Gang.V.SelfId) then
             SetEnableHandcuffs(Gang.V.SelfPed, false)
             TaskPlayAnim(Gang.V.SelfPed, Gang.V.AnimLib, Gang.V.Anim, 8.0, 2.5, -1, 50, 0, 0, 0, 0)
         else
