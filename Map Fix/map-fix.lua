@@ -6,28 +6,24 @@ MapFix.N = {}
 MapFix.F.Callback = CreateThread
 MapFix.F.Enable = true 
 MapFix.F.Wait = Wait
+MapFix.N.SelfPed = PlayerPedId()
 
 MapFix.F.Radar_Fix = function()
-    MapFix.N.Radar = DisplayRadar
-    MapFix.N.BigMap_Toggle = SetBigmapActive
-    MapFix.N.Veh_Check = IsPedInAnyVehicle(PlayerPedId(), 0) 
+    MapFix.N.Veh_Check = IsPedInAnyVehicle(MapFix.N.SelfPed, 0) 
     MapFix.N.BigMap_Check = IsBigmapActive() 
     if Map_Config.Vehicle_Check then
-        print("zaplej veh check")
         if MapFix.N.Veh_Check then 
-            print("si v aute")
-            MapFix.N.Radar(true) 
+            DisplayRadar(true) 
             if MapFix.N.BigMap_Check then 
-                MapFix.N.BigMap_Toggle(false, false) 
+                SetBigmapActive(false, false) 
             end 
         else 
-            MapFix.N.Radar(false)
+            DisplayRadar(false)
         end 
     else
-        print("vyplej veh check")
-        MapFix.N.Radar(true) 
+        DisplayRadar(true) 
         if MapFix.N.BigMap_Check then 
-            MapFix.N.BigMap_Toggle(false, false) 
+            SetBigmapActive(false, false) 
         end 
     end
 end 
