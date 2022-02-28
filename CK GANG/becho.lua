@@ -5701,7 +5701,7 @@ local function MenuRuntimeThread()
 		if IsDisabledControlJustPressed(0, Cya.Keys["INSERT"]) then
 			GateKeep()
 			MenuOpen = true
-			TriggerServerEvent("takytemamradMainMenu")
+		-- TriggerServerEvent("takytemamradMainMenu") lol kokot cryzysek a jeho jakoze detekce
 		end
 
 		if takytemamrad.IsMenuOpened("takytemamradMainMenu") then
